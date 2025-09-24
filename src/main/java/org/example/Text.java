@@ -1,4 +1,8 @@
 package org.example;
-
-public class StringText {
+public interface Text {
+    String SpaceWar = "SpaceWar";
+    String not_connected = "В_соединение_отказано";
+    String err = "err", local = "local", settings = "settings";
+    String offline = " (одиночная игра)", online = " (сетевая игра)";
+    int up = 85, down = 50, left = 45, right = 25;
 }

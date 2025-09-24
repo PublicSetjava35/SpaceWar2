@@ -1,26 +1,36 @@
 package org.example;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import javax.swing.*;
-import javax.xml.transform.Source;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SpaceWar extends class_parameters implements Text {
-    public SpaceWar() {method_for_supported_parameters();}
+    private static final Log log = LogFactory.getLog(SpaceWar.class);
+
+    public SpaceWar() {
+        method_for_supported_parameters();}
     // client local
     public void method_for_supported_parameters() {
-        context = new AnnotationConfigApplicationContext(Images.class);
+                // jpg files
+                context = new AnnotationConfigApplicationContext(Images.class);
                 images = new class_Images[]{
                 context.getBean("image", class_Images.class),
                 context.getBean("image2", class_Images.class),
                 context.getBean("image3", class_Images.class),
-                context.getBean("image4", class_Images.class)};
-
+                context.getBean("image4", class_Images.class),
+                context.getBean("wall", class_Images.class)};
+                // audio files .mp3
+                audioContext = new AnnotationConfigApplicationContext(audio_format.class);
+                audios = new class_audio[]{audioContext.getBean("entered", class_audio.class),
+                audioContext.getBean("err", class_audio.class)};
         label = new JLabel(new ImageIcon(images[0].getImage()));
 
         frame = new JFrame(SpaceWar);
@@ -29,6 +39,7 @@ public class SpaceWar extends class_parameters implements Text {
         frame.setLocationRelativeTo(null);
         frame.setFocusable(true);
         frame.setLayout(null);
+
         buttons = new JButton[4];
         for(int i = 0; i < buttons.length; i++) {
             buttons[i] = new JButton();
@@ -36,25 +47,40 @@ public class SpaceWar extends class_parameters implements Text {
         }
         panels = new JPanel[4];
         frame.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                keys2[e.getKeyCode()] = true;
-            }
-            public void keyReleased(KeyEvent e) {
-                keys2[e.getKeyCode()] = false;
-            }
+            public void keyPressed(KeyEvent e) {keys2[e.getKeyCode()] = true;}
+            public void keyReleased(KeyEvent e) {keys2[e.getKeyCode()] = false;}
         });
         timer2 = new Timer(10, e -> {
             panels[0].updateUI();
-            if(keys2[KeyEvent.VK_W]) playerY2 -= speed;
-            if(playerY2 <= 0) playerY2 = 0;
-            if(keys2[KeyEvent.VK_S]) playerY2 += speed;
-            if(playerY2 >= this.getHeight() - 130) playerY2 = this.getHeight() - 130;
-            if(keys2[KeyEvent.VK_A]) playerX2 -= speed;
-            if(playerX2 <= 0) playerX2 = 0;
-            if(keys2[KeyEvent.VK_D]) playerX2 += speed;
-            if(playerX2 >= this.getWidth() - 100) playerX2 = this.getWidth() - 100;
+            int nowY = playerY2;
+            int nowX = playerX2;
+            if(keys2[KeyEvent.VK_W]) nowY -= speed;
+            if(nowY <= 0) nowY = 0;
+            if(keys2[KeyEvent.VK_S]) nowY += speed;
+            if(nowY >= this.getHeight() - 130) nowY = this.getHeight() - 130;
+            if(keys2[KeyEvent.VK_A]) nowX -= speed;
+            if(nowX <= 0) nowX = 0;
+            if(keys2[KeyEvent.VK_D]) nowX += speed;
+            if(nowX >= this.getWidth() - 100) nowX = this.getWidth() - 100;
+            rectangle = new Rectangle(nowX, nowY, 100,100);
+            wall = new Rectangle(wallX, wallY, this.getWidth()+100, 35);
+
+            if(!rectangle.intersects(wall)) {
+                isWall = true;
+                playerY2 = nowY;
+                playerX2 = nowX;
+            } else {
+                isWall = false;
+            }
             panels[0].repaint();
         });
+        timerEagle = new Timer(100, e ->{
+            if(keys2[KeyEvent.VK_SPACE]) {
+                bullets.add(new Point(playerX2 + 5, playerY2 + 5));
+                bullets.trimToSize();
+            }
+        });
+        timerEagle.start();
         // offline
         panels[0] = new JPanel() {
           public void paintComponent(Graphics g) {
@@ -65,6 +91,14 @@ public class SpaceWar extends class_parameters implements Text {
               g2.fillRect(playerX2, playerY2, 100, 100);
               g2.setColor(Color.RED);
               g2.fillRect(botX, botY, 100,100);
+              if(!isWall) {
+                  g2.drawImage(images[4].getImage5(), wallX, wallY, this.getWidth(), 50, null);
+              }
+              for(Point bullet:new ArrayList<>(bullets)) {
+                  g2.setColor(Color.RED);
+                  g2.fillRect(bullet.x, bullet.y, 5,35);
+                  if(bullet.y == 5) bullets.remove(bullet);
+              }
           }
         };
         panels[0].setFocusable(true);
@@ -85,26 +119,12 @@ public class SpaceWar extends class_parameters implements Text {
         panels[2].setBounds(770,0,400,50);
         panels[2].setBackground(Color.BLUE);
         panels[2].add(errLabel);
-        timerErr = new Timer(300, e -> {
-            XY++;
-            if(XY == 10) {
-                XY = 0;
-                ((Timer)e.getSource()).stop();
-                panels[2].setVisible(false);
-            }
-        });
-        timerTime = new Timer(200, e -> {
-            XL++;
-            if(XL == 10) {
-                XL = 0;
-                ((Timer) e.getSource()).stop();
-                timerBot.start();
-            }
-        });
         // offline
         buttons[0].setBounds(100,120,200,100);
         buttons[0].setFocusable(false);
         buttons[0].setFont(new Font(local, Font.PLAIN, 20));
+        buttons[0].setBackground(Color.BLUE);
+        buttons[0].setForeground(Color.WHITE);
         buttons[0].setText("одиночная игра");
         buttons[0].addActionListener( e -> {
             frame.setTitle(SpaceWar+offline);
@@ -116,6 +136,8 @@ public class SpaceWar extends class_parameters implements Text {
         buttons[1].setBounds(100,350,200,100);
         buttons[1].setFocusable(false);
         buttons[1].setFont(new Font(settings, Font.PLAIN, 20));
+        buttons[1].setBackground(Color.BLUE);
+        buttons[1].setForeground(Color.WHITE);
         buttons[1].setText("настройки");
         buttons[1].addActionListener(e -> {
             panels[1].setVisible(true);
@@ -125,14 +147,17 @@ public class SpaceWar extends class_parameters implements Text {
         buttons[2].setFocusable(false);
         buttons[2].setFont(new Font("online", Font.PLAIN, 20));
         buttons[2].setText("сетевая игра");
+        buttons[2].setBackground(Color.BLUE);
+        buttons[2].setForeground(Color.WHITE);
         buttons[2].addActionListener( e-> {
              try {
-                 Socket socket = new Socket("localhost", 6000);
+                 Socket socket = new Socket("localhost", PORT);
                  for_network_parameters(socket);
                  frame.setTitle(SpaceWar+online);
                  isJButton_false();
              } catch (IOException exception) {
                  panels[2].setVisible(true);
+                 audios[1].err();
                  timerErr.start();
                  System.err.println("server disconnected -> " + exception);
              }
@@ -141,6 +166,8 @@ public class SpaceWar extends class_parameters implements Text {
         buttons[3].setFocusable(false);
         buttons[3].setFont(new Font("exit", Font.PLAIN, 20));
         buttons[3].setText("выйти");
+        buttons[3].setBackground(Color.BLUE);
+        buttons[3].setForeground(Color.WHITE);
         buttons[3].addActionListener(e -> System.exit(0));
 
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "panel");
@@ -183,6 +210,50 @@ public class SpaceWar extends class_parameters implements Text {
               setBounds(0,0, width, height);
             }
         });
+        buttons[0].addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                buttons[0].setBackground(Color.CYAN);
+                buttons[0].setForeground(Color.BLACK);
+                audios[0].run();
+            }
+            public void mouseExited(MouseEvent e) {
+                buttons[0].setBackground(Color.BLUE);
+                buttons[0].setForeground(Color.WHITE);
+            }
+        });
+        buttons[1].addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                buttons[1].setBackground(Color.CYAN);
+                buttons[1].setForeground(Color.BLACK);
+                audios[0].run();
+            }
+            public void mouseExited(MouseEvent e) {
+                buttons[1].setBackground(Color.BLUE);
+                buttons[1].setForeground(Color.WHITE);
+            }
+        });
+        buttons[2].addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                buttons[2].setBackground(Color.CYAN);
+                buttons[2].setForeground(Color.BLACK);
+                audios[0].run();
+            }
+            public void mouseExited(MouseEvent e) {
+                buttons[2].setBackground(Color.BLUE);
+                buttons[2].setForeground(Color.WHITE);
+            }
+        });
+        buttons[3].addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                buttons[3].setBackground(Color.CYAN);
+                buttons[3].setForeground(Color.BLACK);
+                audios[0].run();
+            }
+            public void mouseExited(MouseEvent e) {
+                buttons[3].setBackground(Color.BLUE);
+                buttons[3].setForeground(Color.WHITE);
+            }
+        });
         // add panels and frame
         frame.add(panels[0]);
         frame.add(panels[1]);
@@ -201,10 +272,12 @@ public class SpaceWar extends class_parameters implements Text {
         for (Player player : snapshot) {
             g2.fillRect(player.playerX, player.playerY, 100, 100);
         }
-        width = this.getWidth();
-        height = 35;
-        g2.setColor(Color.BLUE);
-        g2.fillRect(0,435, width, height);
+        g2.drawImage(images[4].getImage5(), wallX_server, wallY_server, this.getWidth(), 50, null);
+        ArrayList<Point> buffer = server_bullets;
+        for (Point bullet:buffer) {
+            g2.setColor(Color.RED);
+            g2.fillRect(bullet.x, bullet.y, 5,35);
+        }
     }
     public void isJButton_false() {
         // button false
@@ -219,13 +292,6 @@ public class SpaceWar extends class_parameters implements Text {
         buttons[1].setVisible(true);
         buttons[2].setVisible(true);
         buttons[3].setVisible(true);
-    }
-    public void panels_True() {
-        // panels true
-        panels[0].setVisible(true);
-        panels[1].setVisible(true);
-        panels[2].setVisible(true);
-        this.setVisible(true);
     }
     public void panels_False() {
         // panels false
@@ -248,17 +314,31 @@ public class SpaceWar extends class_parameters implements Text {
         this.requestFocusInWindow();
         timer = new Timer(10, e -> {
             try {
-                if(keys[KeyEvent.VK_W]) outputStream.writeByte(85);
-                if(keys[KeyEvent.VK_S]) outputStream.writeByte(50);
-                if(keys[KeyEvent.VK_A]) outputStream.writeByte(45);
-                if(keys[KeyEvent.VK_D]) outputStream.writeByte(25);
+                if(keys[KeyEvent.VK_W]) outputStream.writeByte(up);
+                if(keys[KeyEvent.VK_S]) outputStream.writeByte(down);
+                if(keys[KeyEvent.VK_A]) outputStream.writeByte(left);
+                if(keys[KeyEvent.VK_D]) outputStream.writeByte(right);
                 outputStream.flush();
             } catch (IOException ee) {
                 System.err.println("err bytes -> " + ee);
             }
         });
         timer.start();
-        players.add(new Player(200,200));
+        players.add(new Player(905, 650));
+        TimerServerBullet = new Timer(100, e -> {
+            try {
+                if(keys[KeyEvent.VK_SPACE]) {
+                    outputStream.writeByte(108);
+                    outputStream.writeInt(playerX+5);
+                    outputStream.writeInt(playerY+5);
+                    outputStream.flush();
+                }
+                outputStream.flush();
+            } catch (IOException exception) {
+                System.err.println("err, bullets -> " + exception);
+            }
+        });
+        TimerServerBullet.start();
         thread = new Thread(() -> {
             try {
                 while (true) {
@@ -268,17 +348,38 @@ public class SpaceWar extends class_parameters implements Text {
                     for(int i = 0; i < player; i++) {
                          playerY = inputStream.readInt();
                          playerX = inputStream.readInt();
-                        newList.add(new Player(playerX, playerY));
+                         // проверяем столкновение всего экрана
+                        this.addComponentListener(new ComponentAdapter() {
+                            public void componentResized(ComponentEvent e) {
+                                try {
+                                    int width = getWidth(), height = getHeight();
+                                    String messagePanel = width + " " + height;
+                                    setBounds(0,0, width, height);
+                                    byte[] bytesPanels = messagePanel.getBytes(StandardCharsets.UTF_8);
+                                    outputStream.writeByte(95);
+                                    outputStream.writeInt(messagePanel.length());
+                                    outputStream.write(bytesPanels);
+                                    outputStream.flush();
+                                } catch (IOException ee) {
+                                    System.err.println("err bytes -> " + ee);
+                                }
+                            }
+                        });
+                         newList.add(new Player(playerX, playerY));
                     }
                     players = newList;
+                    int bulletServer = inputStream.readInt();
+                    ArrayList<Point> newBullets = new ArrayList<>();
+                    for (int i = 0; i < bulletServer; i++) {
+                        int x = inputStream.readInt();
+                        int y = inputStream.readInt();
+                        newBullets.add(new Point(x, y));
+                    }
+                    server_bullets = newBullets;
+                    repaint();
                 }
             } catch (IOException e) {
                 System.err.println("err bytes -> " + e);
-            }
-            rectangle = new Rectangle(playerX, playerY, 100, 100);
-            blockBarer = new Rectangle(0, 435, this.getWidth(), 35);
-            if(blockBarer.intersects(rectangle)) {
-                System.out.println("Столкновение");
             }
         });
         thread.start();
@@ -295,7 +396,7 @@ public class SpaceWar extends class_parameters implements Text {
                     animalX = (int) Math.abs(animalX);
                 } else if(playerY2 >= this.getHeight() - 130) {
                     animalY = (int) -Math.abs(animalY);
-                } else if(playerY2 <= 0) {
+                } else if(playerY2 <= 500) {
                     animalY = (int) Math.abs(animalY);
                 }
             });
@@ -317,6 +418,26 @@ public class SpaceWar extends class_parameters implements Text {
                     }
                 }
             });
+            timerErr = new Timer(300, e -> {
+                XY++;
+                if(XY == 3) {
+                    XY = 0;
+                    ((Timer)e.getSource()).stop();
+                    panels[2].setVisible(false);
+                }
+            });
+            timerTime = new Timer(200, e -> {
+                XL++;
+                if(XL == 10) {
+                    XL = 0;
+                    ((Timer) e.getSource()).stop();
+                    timerBot.start();
+                }
+            });
+            bulletTimer = new Timer(12, e -> {
+                for(Point bullet:bullets) bullet.y -= speed_bullet;
+            });
+            bulletTimer.start();
         }
     }
     public static void main(String[] args) {
