@@ -32,4 +32,10 @@ abstract class Images {
         class_images.setImage4(ImageIO.read(new File("src/main/images/OnlineCosmos.jpg")));
         return class_images;
     }
+    @Bean(name = "wall")
+    class_Images class_images5() throws IOException {
+        class_Images class_images = new class_Images();
+        class_images.setImage5(ImageIO.read(new File("src/main/images/Wall.jpg")));
+        return class_images;
+    }
 }
