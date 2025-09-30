@@ -55,8 +55,8 @@ public class Server {
         while(true) {
             Socket socket = serverSocket.accept();
             if(socket.isClosed()) break;
-            int randoms = random.nextInt(200);
-            Player player = new Player(905,650,10, 1.F,0,0, randoms);
+            int id = random.nextInt(100);
+            Player player = new Player(905,650,10, 1.F,0,0, id);
             players.add(player);
             ClientHandler clientHandler = new ClientHandler(socket, players, player);
             synchronized (clients) {
@@ -132,15 +132,11 @@ public class Server {
                     Iterator<Bullet> iterator = bullets.iterator();
                     Rectangle bulletRECT = new Rectangle();
                     Rectangle playerRECT = new Rectangle();
+
                     while (iterator.hasNext()) {
                         Bullet bullet = iterator.next();
                         bulletRECT.setBounds(bullet.x, bullet.y, 5, 35);
-
                         for(Player player:players) {
-                            if(bullet.x >= panelX || bullet.x < 0 || bullet.y >= panelY || bullet.y < 0) {
-                                iterator.remove();
-                                continue;
-                            }
                             if(player.id == bullet.owner) continue;
                             playerRECT.setBounds(player.nowX + 5, player.nowY + 5, 100, 100);
                             if (bulletRECT.intersects(playerRECT)) {
@@ -156,7 +152,7 @@ public class Server {
                         player.playerX = player.nowX;
                         player.playerY = player.nowY;
                     }
-                    // после нажатие escape игрок удаляется
+                    // после нажатие escape все удаляется
                     if (bytes == 105) {
                         synchronized (player) {
                             players.remove(player);

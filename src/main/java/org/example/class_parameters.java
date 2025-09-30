@@ -26,11 +26,11 @@ public class class_parameters extends JPanel {
     public static class_audio[] audios;
     public static DataInputStream inputStream;
     public static DataOutputStream outputStream;
-    public static Rectangle wall_server;
-    public static Rectangle playerRECT_SERVER;
     public static JFrame frame;
     public static JLabel label, errLabel;
     public static JButton[] buttons;
+    public static JButton menu, update, button_continue;
+    public static JButton server_menu, server_continue;
     public static JPanel[] panels;
     public static Timer timer, timer2;
     public static Timer timerErr, timerTime;
@@ -40,6 +40,8 @@ public class class_parameters extends JPanel {
     public static Timer timer_bot;
     public static Timer bot_bullet_timer;
     public static boolean isAnimal_server;
+    public static boolean isEmptyIN = false;
+    public static boolean server_isEmptyIN = false;
     public static int speed = 10, speed_bullet = 10;
     public static Thread thread;
     public static int playerX2 = 905;

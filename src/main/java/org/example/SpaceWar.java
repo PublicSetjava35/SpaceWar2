@@ -13,16 +13,6 @@ import java.util.Iterator;
 public class SpaceWar extends class_parameters implements text_field {
     public SpaceWar() {method_for_supported_parameters();}
     // client local
-    public void images_annotation() {
-        // jpg files
-        context = new AnnotationConfigApplicationContext(Images.class);
-        images = new class_Images[]{
-                context.getBean("image", class_Images.class),
-                context.getBean("image2", class_Images.class),
-                context.getBean("image3", class_Images.class),
-                context.getBean("image4", class_Images.class),
-                context.getBean("wall", class_Images.class)};
-    }
     public void method_for_supported_parameters() {
                 // jpg files
                 context = new AnnotationConfigApplicationContext(Images.class);
@@ -50,7 +40,7 @@ public class SpaceWar extends class_parameters implements text_field {
             buttons[i] = new JButton();
             frame.add(buttons[i]);
         }
-        panels = new JPanel[4];
+        panels = new JPanel[5];
         frame.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {keys2[e.getKeyCode()] = true;}
             public void keyReleased(KeyEvent e) {keys2[e.getKeyCode()] = false;}
@@ -109,6 +99,16 @@ public class SpaceWar extends class_parameters implements text_field {
             bot_bullets.add(new Point(botX+5, botY+5));
         });
         // offline
+        panels[3] = new JPanel();
+        panels[3].setBounds(750,405,465,100);
+        panels[3].setBackground(Color.BLACK);
+        panels[3].setLayout(null);
+        // server 
+        panels[4] = new JPanel();
+        panels[4].setBounds(750,445, 465,100);
+        panels[4].setBackground(Color.BLACK);
+        panels[4].setLayout(null);
+
         panels[0] = new JPanel() {
           public void paintComponent(Graphics g) {
               super.paintComponent(g);
@@ -204,61 +204,166 @@ public class SpaceWar extends class_parameters implements text_field {
         buttons[3].setForeground(Color.WHITE);
         buttons[3].addActionListener(e -> System.exit(0));
 
-        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "panel");
-        frame.getRootPane().getActionMap().put("panel", new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                panels_False();
-                button_true();
-                if (outputStream != null)
-                    try {
-                        outputStream.writeByte(105);
-                        outputStream.flush();
-                    } catch (IOException ignored) {
-                  } else  {System.out.println("server, not connected");}
-                // initializations timer
-                if(timer != null) {
-                    timer.stop();
-                } else { System.out.println("timer not initialized");}
-                // initializations timer2
-                if(timer2 != null) {
-                    timer2.stop();
-                } else {System.out.println("timer2 not initialized");}
-                // initializations timerAnimal
-                if(timerAnimal != null) {
-                    timerAnimal.stop();
-                } else {System.out.println("timerAnimal not initialized");}
-                // initializations timerAnimal
-                if(timerBot != null) {
-                    timerBot.stop();
-                } else {System.out.println("timerBot not initialized");}
-                // initializations timerAnimal
-                if(bot_bullet_timer != null) {
-                    bot_bullet_timer.stop();
-                } else { System.out.println("timerBot not initialized");}
-                // initializations timerAnimal
-                if(bulletTimer != null) {
-                    bulletTimer.stop();
-                } else {System.out.println("timerBot not initialized");}
-                // initializations timerAnimal
-                if(timer_bot != null) {
-                    timer_bot.stop();
-                } else {System.out.println("timerBot not initialized");}
-                if(timerEagle != null) {
-                    timerEagle.start();
-                } else {System.out.println("timerBot not initialized");}
-                if(thread != null && thread.isAlive()) {
-                    thread.interrupt();
-                }
-                if(timer != null) timer.stop();
-                if(TimerServerBullet != null) TimerServerBullet.stop();
-                frame.setTitle(SpaceWar);
-                bullets.clear();
-                bot_bullets.clear();
-                playerX2 = 905; playerY2 = 650;
-                botX = 905; botY = 65;
+        button_continue = new JButton("продолжить");
+        button_continue.setBounds(310,15,155,70);
+        button_continue.setFocusable(false);
+        button_continue.setFont(new Font("continue", Font.PLAIN, 20));
+        button_continue.setBackground(Color.BLUE);
+        button_continue.setForeground(Color.WHITE);
+
+        button_continue.addActionListener( e -> {
+            panels[3].setVisible(false);
+            timer2.start();
+            timerTime.start();
+            bulletTimer.start();
+            timerEagle.start();
+            bot_bullet_timer.start();
+        });
+        update = new JButton("повторить");
+        update.setBounds(155, 15, 150,70);
+        update.setFocusable(false);
+        update.setFont(new Font("повторить", Font.PLAIN, 20));
+        update.setBackground(Color.BLUE);
+        update.setForeground(Color.WHITE);
+        update.addActionListener( e -> {
+            panels[3].setVisible(false);
+            bullets.clear();
+            bot_bullets.clear();
+            timer2.start();
+            timerTime.start();
+            bulletTimer.start();
+            timerEagle.start();
+            bot_bullet_timer.start();
+            XL = 0;
+            playerX2 = 905;
+            playerY2 = 650;
+            botX = 905;
+            botY = 65;
+        });
+        menu = new JButton("меню");
+        menu.setBounds(0,15, 150,70);
+        menu.setFocusable(false);
+        menu.setBackground(Color.BLUE);
+        menu.setForeground(Color.WHITE);
+        menu.setFont(new Font("menu", Font.PLAIN, 20));
+        menu.addActionListener(e -> {
+            button_true();
+            panels_False();
+            panels[4].setVisible(false);
+            // initializations timer2
+            if(timer2 != null) {
+                timer2.stop();
+            } else {System.out.println("timer2 not initialized");}
+            // initializations timerAnimal
+            if(timerAnimal != null) {
+                timerAnimal.stop();
+            } else {System.out.println("timerAnimal not initialized");}
+            // initializations timerAnimal
+            if(timerBot != null) {
+                timerBot.stop();
+            } else {System.out.println("timerBot not initialized");}
+            // initializations timerAnimal
+            if(bot_bullet_timer != null) {
+                bot_bullet_timer.stop();
+            } else { System.out.println("timerBot not initialized");}
+            // initializations timerAnimal
+            if(bulletTimer != null) {
+                bulletTimer.stop();
+            } else {System.out.println("timerBot not initialized");}
+            // initializations timerAnimal
+            if(timer_bot != null) {
+                timer_bot.stop();
+            } else {System.out.println("timerBot not initialized");}
+            if(timerEagle != null) {
+                timerEagle.start();
+            } else {System.out.println("timerBot not initialized");}
+            frame.setTitle(SpaceWar);
+            bullets.clear();
+            bot_bullets.clear();
+            playerX2 = 905; playerY2 = 650;
+            botX = 905; botY = 65;
+        });
+        server_menu = new JButton("меню");
+        server_menu.setBounds(5, 15, 200, 70);
+        server_menu.setFocusable(false);
+        server_menu.setFont(new Font("server_menu", Font.PLAIN, 20));
+        server_menu.setBackground(Color.BLUE);
+        server_menu.setForeground(Color.WHITE);
+
+        server_menu.addActionListener( e -> {
+            // серверная часть
+            panels[4].setVisible(false);
+            try {
+                outputStream.writeByte(105);
+                outputStream.flush();
+            } catch (IOException ignored){}
+            panels_False();
+            button_true();
+            if(timer != null) timer.stop();
+            if(TimerServerBullet != null) TimerServerBullet.stop();
+            if(thread != null && thread.isAlive()) {
+                thread.interrupt();
             }
         });
 
+        server_continue = new JButton("продолжить");
+        server_continue.setBounds(250,15,200,70);
+        server_continue.setFocusable(false);
+        server_continue.setFont(new Font("server_continue", Font.PLAIN, 20));
+        server_continue.setBackground(Color.BLUE);
+        server_continue.setForeground(Color.WHITE);
+        server_continue.addActionListener(e -> panels[4].setVisible(false));
+
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "panel");
+        frame.getRootPane().getActionMap().put("panel", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if(panels[3] != null) {
+                    panels[3].setVisible(false);
+                } else {System.out.println("panels not synchronized");}
+
+                server_isEmptyIN = !server_isEmptyIN;    
+                panels[4].setVisible(!server_isEmptyIN);
+                isEmptyIN = !isEmptyIN;
+                if(!isEmptyIN) {
+                    panels[3].setVisible(true);
+                    // initializations timer2
+                    if(timer2 != null) {
+                        timer2.stop();
+                    } else {System.out.println("timer2 not initialized");}
+                    // initializations timerAnimal
+                    if(timerAnimal != null) {
+                        timerAnimal.stop();
+                    } else {System.out.println("timerAnimal not initialized");}
+                    // initializations timerAnimal
+                    if(timerBot != null) {
+                        timerBot.stop();
+                    } else {System.out.println("timerBot not initialized");}
+                    // initializations timerAnimal
+                    if(bot_bullet_timer != null) {
+                        bot_bullet_timer.stop();
+                    } else { System.out.println("timerBot not initialized");}
+                    // initializations timerAnimal
+                    if(bulletTimer != null) {
+                        bulletTimer.stop();
+                    } else {System.out.println("timerBot not initialized");}
+                    // initializations timerAnimal
+                    if(timer_bot != null) {
+                        timer_bot.stop();
+                    } else {System.out.println("timerBot not initialized");}
+                    if(timerEagle != null) {
+                        timerEagle.start();
+                    } else {System.out.println("timerBot not initialized");}
+                } else {
+                    timer2.start();
+                    timerTime.start();
+                    bulletTimer.start();
+                    timerEagle.start();
+                    bot_bullet_timer.start();
+                    XL = 0;
+                    panels[3].setVisible(false);
+                }
+            }
+        });
         frame.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
               int width = frame.getWidth(), height = frame.getHeight();
@@ -312,13 +417,78 @@ public class SpaceWar extends class_parameters implements text_field {
                 buttons[3].setForeground(Color.WHITE);
             }
         });
+        menu.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                menu.setBackground(Color.CYAN);
+                menu.setForeground(Color.BLACK);
+                audios[0].run();
+            }
+            public void mouseExited(MouseEvent e) {
+                menu.setBackground(Color.BLUE);
+                menu.setForeground(Color.WHITE);
+            }
+        });
+        update.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                update.setBackground(Color.CYAN);
+                update.setForeground(Color.BLACK);
+                audios[0].run();
+            }
+            public void mouseExited(MouseEvent e) {
+                update.setBackground(Color.BLUE);
+                update.setForeground(Color.WHITE);
+            }
+        });
+        button_continue.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                button_continue.setBackground(Color.CYAN);
+                button_continue.setForeground(Color.BLACK);
+                audios[0].run();
+            }
+            public void mouseExited(MouseEvent e) {
+                button_continue.setBackground(Color.BLUE);
+                button_continue.setForeground(Color.WHITE);
+            }
+        });
+        server_menu.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                server_menu.setBackground(Color.CYAN);
+                server_menu.setForeground(Color.BLACK);
+                audios[0].run();
+            }
+            public void mouseExited(MouseEvent e) {
+                server_menu.setBackground(Color.BLUE);
+                server_menu.setForeground(Color.WHITE);
+            }
+        });
+        server_continue.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                server_continue.setBackground(Color.CYAN);
+                server_continue.setForeground(Color.BLACK);
+                audios[0].run();
+            }
+            public void mouseExited(MouseEvent e) {
+                server_continue.setBackground(Color.BLUE);
+                server_continue.setForeground(Color.WHITE);
+            }
+        });
         // add panels and frame
         frame.add(panels[0]);
         frame.add(panels[1]);
         frame.add(panels[2]);
+        this.add(panels[4]);
+        panels[0].add(panels[3]);
+        panels[3].add(menu);
+        panels[3].add(update);
+        panels[3].add(button_continue);
+        panels[4].add(server_menu);
+        panels[4].add(server_continue);
         frame.add(this);
         frame.add(label);
+        panels[0].setLayout(null);
+        this.setLayout(null);
         panels_False();
+        panels[4].setVisible(false);
         frame.setVisible(true);
     }
     public void button_false() {
@@ -340,23 +510,27 @@ public class SpaceWar extends class_parameters implements text_field {
         panels[0].setVisible(false);
         panels[1].setVisible(false);
         panels[2].setVisible(false);
+        panels[3].setVisible(false);
         this.setVisible(false);
     }
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.BLACK);
-        g2.drawImage(images[3].getImage4(), 0,0,this.getWidth(), this.getHeight(), null);
-        ArrayList<Player> snapshot = players;
+        g2.drawImage(images[3].getImage4(), 0,0, this.getWidth(), this.getHeight(), null);
+        ArrayList<Player> snapshot;
+        synchronized (players) {
+            snapshot = new ArrayList<>(players);
+        }
         for (Player player : snapshot) {
+            g2.setColor(Color.BLACK);
             g2.fillRect(player.playerX, player.playerY, 100, 100);
         }
-        if(!is_wall_server) {
-            g2.drawImage(images[4].getImage5(), wallX_server, wallY_server, this.getWidth(), 50, null);
-        }
-        for (Point bullet:server_bullets) {
+        g2.drawImage(images[4].getImage5(), wallX_server, wallY_server, this.getWidth(), 50, null);
+
+        for (Point bullet : server_bullets) {
             g2.setColor(Color.RED);
-            g2.fillRect(bullet.x, bullet.y, 5,35);
+            g2.fillRect(bullet.x, bullet.y, 5, 35);
         }
     }
     // server network
@@ -402,7 +576,6 @@ public class SpaceWar extends class_parameters implements text_field {
             }
         });
         timer.start();
-        players.add(new Player(905, 650));
         TimerServerBullet = new Timer(100, e -> {
             try {
                 if(keys[KeyEvent.VK_SPACE]) {
@@ -413,9 +586,8 @@ public class SpaceWar extends class_parameters implements text_field {
                 System.err.println("err, bullets -> " + exception);
             }
         });
-
-
         TimerServerBullet.start();
+        players.add(new Player(905, 650));
             thread = new Thread(() -> {
                 try {
                     while (true) {
@@ -425,32 +597,11 @@ public class SpaceWar extends class_parameters implements text_field {
                         for (int i = 0; i < player; i++) {
                             playerX = inputStream.readInt();
                             playerY = inputStream.readInt();
-
-                            playerRECT_SERVER = new Rectangle(playerX, playerY, 100,100);
-                            wall_server = new Rectangle(wallX_server, wallY_server, this.getWidth(), 50);
-                            is_wall_server = !playerRECT_SERVER.intersects(wall_server);
-
                             // проверяем столкновение всего экрана
-                            this.addComponentListener(new ComponentAdapter() {
-                                public void componentResized(ComponentEvent e) {
-                                    try {
-                                        int width = getWidth(), height = getHeight();
-                                        String messagePanel = width + " " + height;
-                                        setBounds(0, 0, width, height);
-                                        byte[] bytesPanels = messagePanel.getBytes(StandardCharsets.UTF_8);
-                                        outputStream.writeByte(95);
-                                        outputStream.writeInt(messagePanel.length());
-                                        outputStream.write(bytesPanels);
-                                        outputStream.flush();
-                                    } catch (IOException ee) {
-                                        System.err.println("err bytes -> " + ee);
-                                    }
-                                }
-                            });
                             newList.add(new Player(playerX, playerY));
                         }
                         synchronized (players) {
-                            players = newList;
+                           players = newList;
                         }
                         int bulletServer = inputStream.readInt();
                         ArrayList<Point> newBullets = new ArrayList<>();
@@ -470,6 +621,23 @@ public class SpaceWar extends class_parameters implements text_field {
                 }
             });
             thread.start();
+        this.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                try {
+                    int width = getWidth(), height = getHeight();
+                    String messagePanel = width + " " + height;
+
+                    setBounds(0, 0, width, height);
+                    byte[] bytesPanels = messagePanel.getBytes(StandardCharsets.UTF_8);
+                    outputStream.writeByte(95);
+                    outputStream.writeInt(messagePanel.length());
+                    outputStream.write(bytesPanels);
+                    outputStream.flush();
+                } catch (IOException ee) {
+                    System.err.println("err bytes -> " + ee);
+                }
+            }
+        });
         setVisible(true);
     }
     static class Animals extends SpaceWar {
@@ -487,14 +655,14 @@ public class SpaceWar extends class_parameters implements text_field {
                     animalY = (int) Math.abs(animalY);
                 }
             });
-            timerBot = new Timer(10, e -> {
-             botX += (int) animalBotX;
-             if(botX >= this.getWidth() - 100) {
-                 animalBotX = -Math.abs(animalBotX);
-             } else if (botX < 0) {
-                 animalBotX = Math.abs(animalBotX);
-             }
-            });
+                timerBot = new Timer(10, e -> {
+                    botX += (int) animalBotX;
+                    if (botX >= this.getWidth() - 100) {
+                        animalBotX = -Math.abs(animalBotX);
+                    } else if (botX < 0) {
+                        animalBotX = Math.abs(animalBotX);
+                    }
+                });
             frame.addKeyListener(new KeyAdapter() {
                 public void keyReleased(KeyEvent e) {
                     if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
@@ -530,7 +698,6 @@ public class SpaceWar extends class_parameters implements text_field {
             bot_bullet_timer = new Timer(12, e -> {
                 for(Point bot_bullet:bot_bullets) bot_bullet.y += speed_bullet;
             });
-            bot_bullet_timer.start();
         }
     }
     public static void main(String[] args) {

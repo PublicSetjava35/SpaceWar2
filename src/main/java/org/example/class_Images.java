@@ -8,5 +8,4 @@ public class class_Images {
     private Image image3;
     private Image image4;
     private Image image5;
-    private Image imageButton;
 }
