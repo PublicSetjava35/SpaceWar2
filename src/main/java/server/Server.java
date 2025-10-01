@@ -190,6 +190,9 @@ public class Server {
                 }
             }
         }
+        // будем получать параметры после подключения клиента
+        public static void player_connected() {
+        }
         public void ThreadClientsBytes() {
             if(outputStream == null) return;
             try {
