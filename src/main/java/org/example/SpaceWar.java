@@ -212,7 +212,7 @@ public class SpaceWar extends ClassParameters implements text_field {
         die_label.setForeground(Color.RED);
 
         JLabel die_label_2 = new JLabel("победа");
-        die_label_2.setBounds(170,-30,150,100);
+        die_label_2.setBounds(185,-30,150,100);
         die_label_2.setFont(new Font("label", Font.PLAIN, 20));
         die_label_2.setForeground(Color.RED);
         panels[5] = new JPanel();
@@ -791,15 +791,15 @@ public class SpaceWar extends ClassParameters implements text_field {
                 menu_2.setForeground(Color.WHITE);
             }
         });
-        update_3.addMouseListener(new MouseAdapter() {
+        update_2.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
-                update_3.setBackground(Color.CYAN);
-                update_3.setForeground(Color.BLACK);
+                update_2.setBackground(Color.CYAN);
+                update_2.setForeground(Color.BLACK);
                 audios[0].run();
             }
             public void mouseExited(MouseEvent e) {
-                update_3.setBackground(Color.BLUE);
-                update_3.setForeground(Color.WHITE);
+                update_2.setBackground(Color.BLUE);
+                update_2.setForeground(Color.WHITE);
             }
         });
         menu_3.addMouseListener(new MouseAdapter() {

@@ -2,6 +2,10 @@ package org.example;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import lombok.Data;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 @Data
 public class ClassAudio {
     private javazoom.jl.player.Player audio;
@@ -13,9 +17,11 @@ public class ClassAudio {
                 threadPick.interrupt();
             }
             try {
-                audio = new Player(getClass().getResourceAsStream("/org/example/resources/audio/clickButton.mp3"));
+                audio = new Player(new FileInputStream("src/main/audio/clickButton.mp3"));
                 audio.play();
-            } catch (JavaLayerException ignored) {}
+            } catch (JavaLayerException ignored) {} catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         });
         threadPick.start();
     }
@@ -25,10 +31,12 @@ public class ClassAudio {
         }
        thread = new Thread(() -> {
             try {
-                err_audio = new Player(getClass().getResourceAsStream("/org/example/resources/audio/error_connected.mp3"));
+                err_audio = new Player(new FileInputStream("src/main/audio/error_connected.mp3"));
                 err_audio.play();
-            } catch (JavaLayerException ignored) {}
-        });
+            } catch (JavaLayerException ignored) {} catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+       });
         thread.start();
     }
 }
