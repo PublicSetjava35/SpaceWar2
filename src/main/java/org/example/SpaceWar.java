@@ -25,9 +25,9 @@ public class SpaceWar extends ClassParameters implements text_field {
                 context.getBean("image4", ClassImages.class),
                 context.getBean("wall", ClassImages.class)};
                 // audio files .mp3
-                audioContext = new AnnotationConfigApplicationContext(audio_format.class);
-                audios = new class_audio[]{audioContext.getBean("entered", class_audio.class),
-                audioContext.getBean("err", class_audio.class)};
+                audioContext = new AnnotationConfigApplicationContext(AudioFormat.class);
+                audios = new ClassAudio[]{audioContext.getBean("entered", ClassAudio.class),
+                audioContext.getBean("err", ClassAudio.class)};
         label = new JLabel(new ImageIcon(images[0].getImage()));
 
         frame = new JFrame(SpaceWar);
