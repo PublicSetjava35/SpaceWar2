@@ -1,4 +1,6 @@
 package org.example;
+import com.sun.source.tree.SwitchTree;
+import com.sun.source.tree.Tree;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import javax.swing.*;
@@ -10,18 +12,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class SpaceWar extends class_parameters implements text_field {
+public class SpaceWar extends ClassParameters implements text_field {
     public SpaceWar() {method_for_supported_parameters();}
     // client local
     public void method_for_supported_parameters() {
                 // jpg files
                 context = new AnnotationConfigApplicationContext(Images.class);
-                images = new class_Images[]{
-                context.getBean("image", class_Images.class),
-                context.getBean("image2", class_Images.class),
-                context.getBean("image3", class_Images.class),
-                context.getBean("image4", class_Images.class),
-                context.getBean("wall", class_Images.class)};
+                images = new ClassImages[]{
+                context.getBean("image", ClassImages.class),
+                context.getBean("image2", ClassImages.class),
+                context.getBean("image3", ClassImages.class),
+                context.getBean("image4", ClassImages.class),
+                context.getBean("wall", ClassImages.class)};
                 // audio files .mp3
                 audioContext = new AnnotationConfigApplicationContext(audio_format.class);
                 audios = new class_audio[]{audioContext.getBean("entered", class_audio.class),
@@ -1051,7 +1053,7 @@ public class SpaceWar extends class_parameters implements text_field {
         }
     }
     public static void main(String[] runnable_pack_game) {
-        SwingUtilities.invokeLater(new Runnable() {
+         SwingUtilities.invokeLater(new Runnable() {
             public void run() {new Animals();}
         });
     }

@@ -9,7 +9,7 @@ import java.io.DataOutputStream;
 import java.util.ArrayList;
 
 @AllArgsConstructor
-public class class_parameters extends JPanel {
+public class ClassParameters extends JPanel {
     static ArrayList<Player> players = new ArrayList<>();
     public static final ArrayList<Point> bullets = new ArrayList<>();
     public static final ArrayList<Point> bot_bullets = new ArrayList<>();
@@ -17,8 +17,8 @@ public class class_parameters extends JPanel {
     public static Rectangle playerRECT, wall;
     public static Rectangle botRECT;
     public static AnnotationConfigApplicationContext context, audioContext;
-    public static class_Images[] images;
-    public static class_audio[] audios;
+    public static ClassImages[] images;
+    public static ClassAudio[] audios;
     public static DataInputStream inputStream;
     public static DataOutputStream outputStream;
     public static JFrame frame;

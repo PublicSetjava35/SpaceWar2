@@ -2,14 +2,8 @@ package org.example;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import lombok.Data;
-import org.springframework.stereotype.Component;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-
-@Component
 @Data
-public class class_audio {
+public class ClassAudio {
     private javazoom.jl.player.Player audio;
     private javazoom.jl.player.Player err_audio;
     private Thread thread, threadPick;
@@ -19,10 +13,9 @@ public class class_audio {
                 threadPick.interrupt();
             }
             try {
-                FileInputStream file = new FileInputStream("src/main/audio/clickButton.mp3");
-                audio = new Player(file);
+                audio = new Player(getClass().getResourceAsStream("/org/example/resources/audio/clickButton.mp3"));
                 audio.play();
-            } catch (IOException | JavaLayerException ignored) {}
+            } catch (JavaLayerException ignored) {}
         });
         threadPick.start();
     }
@@ -32,10 +25,9 @@ public class class_audio {
         }
        thread = new Thread(() -> {
             try {
-                FileInputStream file = new FileInputStream("src/main/audio/error_connected.mp3");
-                err_audio = new Player(file);
+                err_audio = new Player(getClass().getResourceAsStream("/org/example/resources/audio/error_connected.mp3"));
                 err_audio.play();
-            } catch (IOException | JavaLayerException ignored) {}
+            } catch (JavaLayerException ignored) {}
         });
         thread.start();
     }

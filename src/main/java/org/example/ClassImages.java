@@ -2,7 +2,7 @@ package org.example;
 import lombok.Data;
 import java.awt.*;
 @Data
-public class class_Images {
+public class ClassImages {
     private Image image;
     private Image image2;
     private Image image3;
