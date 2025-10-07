@@ -1,6 +1,4 @@
 package org.example;
-import com.sun.source.tree.SwitchTree;
-import com.sun.source.tree.Tree;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import javax.swing.*;
