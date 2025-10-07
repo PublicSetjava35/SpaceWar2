@@ -201,6 +201,7 @@ public class Server {
                     for(Player player:players) {
                         outputStream.writeInt(player.playerX);
                         outputStream.writeInt(player.playerY);
+                        outputStream.writeInt(player.id);
                     }
                 }
                 synchronized (bullets) {

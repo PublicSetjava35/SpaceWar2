@@ -882,13 +882,10 @@ public class SpaceWar extends ClassParameters implements text_field {
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.BLACK);
         g2.drawImage(images[3].getImage4(), 0,0, this.getWidth(), this.getHeight(), null);
-        ArrayList<Player> snapshot;
-        synchronized (players) {
-            snapshot = new ArrayList<>(players);
-        }
-        for (Player player : snapshot) {
+        for (Player player : players) {
             g2.setColor(Color.BLACK);
             g2.fillRect(player.playerX, player.playerY, 100, 100);
+            System.out.println("players: " + player.id);
         }
         g2.drawImage(images[4].getImage5(), wallX_server, wallY_server, this.getWidth(), 50, null);
 
@@ -938,7 +935,7 @@ public class SpaceWar extends ClassParameters implements text_field {
             }
         });
         TimerServerBullet.start();
-        players.add(new Player(905, 650));
+        players.add(new Player(905, 650, id));
             thread = new Thread(() -> {
                 try {
                     while (true) {
@@ -946,9 +943,10 @@ public class SpaceWar extends ClassParameters implements text_field {
                         int player = inputStream.readInt();
                         ArrayList<Player> newList = new ArrayList<>();
                         for (int i = 0; i < player; i++) {
+                            id = inputStream.readInt();
                             playerX = inputStream.readInt();
                             playerY = inputStream.readInt();
-                            newList.add(new Player(playerX, playerY));
+                            newList.add(new Player(playerX, playerY, id));
                         }
                         synchronized (players) {
                            players = newList;

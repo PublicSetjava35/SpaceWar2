@@ -49,6 +49,7 @@ public class ClassParameters extends JPanel {
     public static boolean isWall = true;
     public static boolean isEmptyIN = false;
     public static boolean server_isEmptyIN = false;
+    public static boolean isAnimal = false;
     public static int speed = 10, speed_bullet = 10;
     public static int playerX2 = 905;
     public static int playerY2 = 650;
@@ -57,16 +58,17 @@ public class ClassParameters extends JPanel {
     public static int wallX_server = 0, wallY_server = 475;
     public static int XY = 0, XL = 0;
     public static float animalX = 1.F, animalY = 1.F, animalBotX = 8.F;
-    public static boolean isAnimal = false;
     public static int playerX = 150, playerY = 150;
+    public static int id = 0;
     public static int botX = 905, botY = 65;
     public static int PORT = 6000;
 
     static class Player extends Point {
-        public int playerX, playerY;
-        Player(int playerX, int playerY) {
+        public int playerX, playerY, id;
+        Player(int playerX, int playerY, int id) {
             this.playerY = playerY;
             this.playerX = playerX;
+            this.id = id;
         }
     }
 }
